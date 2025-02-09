@@ -1,25 +1,133 @@
 .body
 {
-    background-color: aqua;
+    background-color: #673ab7;
 }
-.nav
-{
-    background-color: aqua;
-    border-radius: 30px;
-    text-align: center;
+.nav {
+    width: 100%;
+    background-color: #673AB7; /* Google Form's purple shade */
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
 }
- 
-a
-{
-    font-size: xx-large;
-    text-decoration: none;
-    color:black;
-    text-decoration: none;
-    cursor:context-menu;
-}
-.nav-flex
-{
+
+.nav-flex {
     display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-around;
+    justify-content: space-between; /* Pushes items to opposite ends */
+    align-items: center;
+    max-width: 1200px;
+    margin: auto;
+    color: white;
 }
+
+.enter p a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.title h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+}
+body {
+    background-color: #f0ebf8;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  .form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 80px; /* Push form below the navbar */
+    width: 100%;
+    padding: 20px;
+  }
+  
+  .form-card {
+    background: white;
+    max-width: 600px;
+    width: 100%;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #d3d3d3;
+  }
+  
+  .form-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3c3c3c;
+    margin-bottom: 10px;
+  }
+  
+  .form-subtitle {
+    font-size: 14px;
+    color: #6c6c6c;
+    margin-bottom: 20px;
+  }
+  
+  .form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .form-section {
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #d3d3d3;
+    background: #fafafa;
+  }
+  
+  .form-section label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #3c3c3c;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .form-section input,
+  .form-section select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .clear-button {
+    background: none;
+    color: #673ab7;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .submit-button {
+    background: #673ab7;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .submit-button:hover {
+    background: #512da8;
+  }
+  

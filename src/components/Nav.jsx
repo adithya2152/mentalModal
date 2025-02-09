@@ -1,16 +1,17 @@
-import "../styles/nav.css"
-export default function Nav()
-{
-    return(
-        <div class = "nav">
-            <div class = "nav-flex">
-                <div>
-                   <h1>Mental Modal</h1>
+import "../styles/nav.css";
+
+export default function Nav() {
+    return (
+        <div className="nav">
+            <div className="nav-flex">
+                <div className="enter">
+                    <p><a href="/login">Enter</a></p>
                 </div>
-                <div>
-                    <p><a href="/login" >Enter</a></p>
+                <div className="title">
+                    <h2>Mental Modal</h2>
                 </div>
             </div>
         </div>
-    )
+    );
 }
+  
