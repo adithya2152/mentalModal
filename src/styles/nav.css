@@ -78,13 +78,18 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 18px;
+    padding-right: 18px;
   }
   
   .form-section {
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 15px;
     border: 1px solid #d3d3d3;
     background: #fafafa;
+   
   }
   
   .form-section label {
@@ -162,11 +167,13 @@ body {
 }
 
 /* Results Table */
+/* Increase space between form and table */
 .results-container {
-  margin-top: 40px;
+  margin-top: 50px; /* Increased from default */
   padding: 20px;
   text-align: center;
 }
+
 
 .results-table {
   width: 80%;

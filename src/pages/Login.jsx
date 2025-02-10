@@ -8,24 +8,17 @@ export default function SDEInternApplication() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [techStack, setTechStack] = useState("");
+  const [gender, setGender] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const dropdownRef = useRef(null);
+  const techDropdownRef = useRef(null);
+  const genderDropdownRef = useRef(null);
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("userData")) || [];
     setUserData(storedData);
   }, []);
-
-  // Simulate unexpected input clearing
-  useEffect(() => {
-    if (fullName.length > 5) {
-      setTimeout(() => {
-        setFullName(""); // Clear full name field unexpectedly
-      }, 3000);
-    }
-  }, [fullName]);
 
   const handlePasswordKeyDown = (event) => {
     if (event.key === "Backspace") {
@@ -33,10 +26,14 @@ export default function SDEInternApplication() {
     }
   };
 
-  // Redirect focus to an unrelated field
-  const handleFieldFocus = (field) => {
-    if (field === "fullName" && email === "") {
-      document.getElementById("emailField").focus();
+  // Close dropdown instantly when focused (for both Tech Stack & Gender)
+  const handleDropdownFocus = (dropdownRef) => {
+    if (dropdownRef.current) {
+      dropdownRef.current.size = 5;
+      setTimeout(() => {
+        dropdownRef.current.blur();
+        dropdownRef.current.size = 1;
+      }, 200); // Close faster
     }
   };
 
@@ -50,9 +47,12 @@ export default function SDEInternApplication() {
     setFullName("");
     setEmail("");
     setTechStack("");
+    setGender("");
     setPassword("");
     setConfirmPassword("");
     setError("");
+    if (techDropdownRef.current) techDropdownRef.current.value = "";
+    if (genderDropdownRef.current) genderDropdownRef.current.value = "";
   };
 
   const handleClearTable = () => {
@@ -64,7 +64,7 @@ export default function SDEInternApplication() {
     event.preventDefault();
 
     if (password !== confirmPassword) {
-      setError("Something is wrong. Try again."); // Vague error message
+      setError("Something is wrong. Try again.");
       return;
     }
 
@@ -72,7 +72,7 @@ export default function SDEInternApplication() {
     const exitTime = new Date().getTime();
     const timeSpent = (exitTime - startTime) / 1000;
 
-    const newUser = { fullName, email, techStack, timeSpent };
+    const newUser = { fullName, email, techStack, gender, timeSpent };
     const updatedUserData = [...userData, newUser];
 
     setUserData(updatedUserData);
@@ -97,33 +97,20 @@ export default function SDEInternApplication() {
           <form className="form-content" onSubmit={handleSubmit}>
             <div className="form-section">
               <label>Full Name</label>
-              <input
-                id="fullNameField"
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                onFocus={() => handleFieldFocus("fullName")}
-                required
-              />
+              <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
             </div>
 
             <div className="form-section">
               <label>Email Address</label>
-              <input
-                id="emailField"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onFocus={() => handleFieldFocus("email")}
-                required
-              />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
 
             <div className="form-section">
               <label>Preferred Tech Stack</label>
               <select
-                ref={dropdownRef}
+                ref={techDropdownRef}
                 onChange={(e) => setTechStack(e.target.value)}
+                onFocus={() => handleDropdownFocus(techDropdownRef)}
                 value={techStack}
               >
                 <option value="">Choose an option</option>
@@ -136,25 +123,28 @@ export default function SDEInternApplication() {
             </div>
 
             <div className="form-section">
+              <label>Gender</label>
+              <select
+                ref={genderDropdownRef}
+                onChange={(e) => setGender(e.target.value)}
+                onFocus={() => handleDropdownFocus(genderDropdownRef)}
+                value={gender}
+              >
+                <option value="">Choose an option</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </div>
+
+            <div className="form-section">
               <label>Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={handlePasswordKeyDown}
-                required
-              />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={handlePasswordKeyDown} required />
             </div>
 
             <div className="form-section">
               <label>Confirm Password</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                onKeyDown={handlePasswordKeyDown}
-                required
-              />
+              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onKeyDown={handlePasswordKeyDown} required />
             </div>
 
             {error && <p className="error-message">{error}</p>}
@@ -183,6 +173,7 @@ export default function SDEInternApplication() {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Stack</th>
+                  <th>Gender</th>
                   <th>Time</th>
                 </tr>
               </thead>
@@ -192,6 +183,7 @@ export default function SDEInternApplication() {
                     <td>{user.fullName}</td>
                     <td>{user.email}</td>
                     <td>{user.techStack}</td>
+                    <td>{user.gender}</td>
                     <td>{user.timeSpent}s</td>
                   </tr>
                 ))}
