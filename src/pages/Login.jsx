@@ -1,18 +1,29 @@
-import { useState, useRef } from "react";
-import "../styles/nav.css"; // Ensure styles are correctly linked
+import { useState, useEffect, useRef } from "react";
+import "../styles/nav.css";
 
 export default function SDEInternApplication() {
+  const [showForm, setShowForm] = useState(false); // Controls form visibility
+  const [userData, setUserData] = useState([]); // Stores all submitted data
+  const [startTime, setStartTime] = useState(null); // Stores entry time
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const [techStack, setTechStack] = useState("");
   const dropdownRef = useRef(null);
 
-  // Disable backspace in the password field
+  // Load previous responses from localStorage when the page loads
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("userData")) || [];
+    setUserData(storedData);
+  }, []);
+
+  // Disable backspace in password field
   const handlePasswordKeyDown = (event) => {
     if (event.key === "Backspace") {
       event.preventDefault();
     }
   };
 
-  // Close dropdown too quickly (violates mental model)
+  // Close dropdown too fast
   const handleTechStackFocus = () => {
     if (dropdownRef.current) {
       dropdownRef.current.size = 5;
@@ -23,64 +34,135 @@ export default function SDEInternApplication() {
     }
   };
 
+  // Handle "Enter" click → Start timer & show form
+  const handleEnterClick = () => {
+    setStartTime(new Date().getTime()); // Store the entry time
+    setShowForm(true); // Show the form
+  };
+
+  // Handle "Clear Form" click → Reset form fields & start new timer
+  const handleClearForm = () => {
+    setStartTime(new Date().getTime()); // Reset start time
+    setFullName("");
+    setEmail("");
+    setTechStack("");
+    if (dropdownRef.current) {
+      dropdownRef.current.value = ""; // Reset dropdown selection
+    }
+  };
+
+  // Handle "Clear Table" click → Remove all saved data
+  const handleClearTable = () => {
+    setUserData([]); // Clear table data in state
+    localStorage.removeItem("userData"); // Remove saved data
+  };
+
+  // Handle form submission
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const exitTime = new Date().getTime(); // Capture exit time
+    const timeSpent = (exitTime - startTime) / 1000; // Calculate time spent in seconds
+
+    // Append new data to userData array
+    const newUser = { fullName, email, techStack, timeSpent };
+    const updatedUserData = [...userData, newUser];
+
+    setUserData(updatedUserData); // Update state
+    localStorage.setItem("userData", JSON.stringify(updatedUserData)); // Save to localStorage
+
+    // Clear input fields
+    handleClearForm();
+  };
+
   return (
     <div className="form-container">
-      <div className="form-card">
-        <h2 className="form-title">SDE Intern Application</h2>
-        <p className="form-subtitle">Please fill out this form to apply for the Software Development Engineer Internship position.</p>
-        <form className="form-content">
-          {/* Full Name */}
-          <div className="form-section">
-            <label>Full Name</label>
-            <input type="text" required />
-          </div>
+      {/* Show "Enter" button initially */}
+      {!showForm && (
+        <div className="enter-container">
+          <button onClick={handleEnterClick} className="enter-button">
+            Enter
+          </button>
+        </div>
+      )}
 
-          {/* Email */}
-          <div className="form-section">
-            <label>Email Address</label>
-            <input type="email" required />
-          </div>
+      {/* Show form only after "Enter" is clicked */}
+      {showForm && (
+        <div className="form-card">
+          <h2 className="form-title">SDE Intern Application</h2>
+          <form className="form-content" onSubmit={handleSubmit}>
+            <div className="form-section">
+              <label>Full Name</label>
+              <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+            </div>
 
-          {/* Preferred Tech Stack */}
-          <div className="form-section">
-            <label>Preferred Tech Stack (Dropdown closes too fast!)</label>
-            <select ref={dropdownRef} onChange={(e) => setTechStack(e.target.value)} onFocus={handleTechStackFocus} value={techStack}>
-              <option value="">Select Tech Stack</option>
-              <option value="MERN">MERN (MongoDB, Express, React, Node.js)</option>
-              <option value="MEVN">MEVN (MongoDB, Express, Vue, Node.js)</option>
-              <option value="LAMP">LAMP (Linux, Apache, MySQL, PHP)</option>
-              <option value="Python/Django">Python & Django</option>
-              <option value="Java/Spring">Java & Spring Boot</option>
-              <option value="Go/Gin">Go & Gin Framework</option>
-            </select>
-          </div>
+            <div className="form-section">
+              <label>Email Address</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            </div>
 
-          {/* Password for Authentication or Job Portal Access */}
-          <div className="form-section">
-            <label>Create a Password (For Job Portal Access)</label>
-            <input type="password" onKeyDown={handlePasswordKeyDown} required />
-          </div>
+            <div className="form-section">
+              <label>Preferred Tech Stack</label>
+              <select ref={dropdownRef} onChange={(e) => setTechStack(e.target.value)} onFocus={handleTechStackFocus} value={techStack}>
+                <option value="">Select Tech Stack</option>
+                <option value="MERN">MERN</option>
+                <option value="MEVN">MEVN</option>
+                <option value="LAMP">LAMP</option>
+                <option value="Python/Django">Python & Django</option>
+                <option value="Java/Spring">Java & Spring Boot</option>
+              </select>
+            </div>
 
-          {/* Resume Upload */}
-          <div className="form-section">
-            <label>Upload Resume (PDF only)</label>
-            <input type="file" accept=".pdf" />
-          </div>
+            <div className="form-section">
+              <label>Create a Password (For Job Portal Access)</label>
+              <input type="password" onKeyDown={handlePasswordKeyDown} required />
+            </div>
 
-          {/* Submit Button */}
-          <div className="form-actions">
-            <button type="reset" className="clear-button">Clear form</button>
-            <button type="submit" className="submit-button">Submit</button>
-          </div>
-        </form>
+            <div className="form-actions">
+              <button type="button" className="clear-button" onClick={handleClearForm}>Clear Form</button>
+              <button type="submit" className="submit-button">Submit</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Results Table (Always Below the Form) */}
+      <div className="results-container">
+        <h2>Submitted Users</h2>
+        {userData.length === 0 ? (
+          <p>No submissions yet.</p>
+        ) : (
+          <>
+            <table className="results-table">
+              <thead>
+                <tr>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Tech Stack</th>
+                  <th>Time Spent (seconds)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {userData.map((user, index) => (
+                  <tr key={index}>
+                    <td>{user.fullName}</td>
+                    <td>{user.email}</td>
+                    <td>{user.techStack}</td>
+                    <td>{user.timeSpent}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* Clear Table Button */}
+            <button onClick={handleClearTable} className="clear-table-button">
+              Clear Table
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
 }
-
-
-
-
 
 
 

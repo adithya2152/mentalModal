@@ -53,7 +53,7 @@ body {
   .form-card {
     background: white;
     max-width: 600px;
-    width: 100%;
+    width: 80%;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -96,8 +96,8 @@ body {
   
   .form-section input,
   .form-section select {
-    width: 100%;
-    padding: 8px;
+    width: 90%;
+    padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 14px;
@@ -130,4 +130,62 @@ body {
   .submit-button:hover {
     background: #512da8;
   }
-  
+/* Center the "Enter" button */
+.enter-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.enter-button, .clear-table-button {
+  background-color: #673AB7;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 20px;
+}
+
+.enter-button:hover, .clear-table-button:hover {
+  background-color: #5E35B1;
+}
+
+/* Form Container */
+.form-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Results Table */
+.results-container {
+  margin-top: 40px;
+  padding: 20px;
+  text-align: center;
+}
+
+.results-table {
+  width: 80%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  background: white;
+}
+
+.results-table th, .results-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.results-table th {
+  background-color: #673AB7;
+  color: white;
+}
+
+.results-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
