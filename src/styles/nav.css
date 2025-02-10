@@ -3,14 +3,15 @@
     background-color: #673ab7;
 }
 .nav {
-    width: 100%;
-    background-color: #673AB7; /* Google Form's purple shade */
-    padding: 10px 20px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 100;
+  width: 100%;
+  background-color: #673AB7; /* Google Form's purple shade */
+  padding: 10px 20px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
 }
+
 
 .nav-flex {
     display: flex;
@@ -189,3 +190,40 @@ body {
 .results-table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
+
+
+.footer {
+  width: 100%;
+  background-color: #673AB7; /* Google Form's purple shade */
+  padding: 15px 20px;
+  position: fixed;
+  top: 0; /* Move to the top */
+  left: 0;
+  z-index: 100;
+  color: white;
+  text-align: center;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 15px;
+}
+
+.footer-nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.footer-nav a:hover {
+  text-decoration: underline;
+}
+
+

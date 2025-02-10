@@ -2,108 +2,131 @@ import { useState, useEffect, useRef } from "react";
 import "../styles/nav.css";
 
 export default function SDEInternApplication() {
-  const [showForm, setShowForm] = useState(false); // Controls form visibility
-  const [userData, setUserData] = useState([]); // Stores all submitted data
-  const [startTime, setStartTime] = useState(null); // Stores entry time
+  const [showForm, setShowForm] = useState(false);
+  const [userData, setUserData] = useState([]);
+  const [startTime, setStartTime] = useState(null);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [techStack, setTechStack] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const dropdownRef = useRef(null);
 
-  // Load previous responses from localStorage when the page loads
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("userData")) || [];
     setUserData(storedData);
   }, []);
 
-  // Disable backspace in password field
+  // Simulate unexpected input clearing
+  useEffect(() => {
+    if (fullName.length > 5) {
+      setTimeout(() => {
+        setFullName(""); // Clear full name field unexpectedly
+      }, 3000);
+    }
+  }, [fullName]);
+
   const handlePasswordKeyDown = (event) => {
     if (event.key === "Backspace") {
       event.preventDefault();
     }
   };
 
-  // Close dropdown too fast
-  const handleTechStackFocus = () => {
-    if (dropdownRef.current) {
-      dropdownRef.current.size = 5;
-      setTimeout(() => {
-        dropdownRef.current.blur();
-        dropdownRef.current.size = 1;
-      }, 300);
+  // Redirect focus to an unrelated field
+  const handleFieldFocus = (field) => {
+    if (field === "fullName" && email === "") {
+      document.getElementById("emailField").focus();
     }
   };
 
-  // Handle "Enter" click → Start timer & show form
   const handleEnterClick = () => {
-    setStartTime(new Date().getTime()); // Store the entry time
-    setShowForm(true); // Show the form
+    setStartTime(new Date().getTime());
+    setShowForm(true);
   };
 
-  // Handle "Clear Form" click → Reset form fields & start new timer
   const handleClearForm = () => {
-    setStartTime(new Date().getTime()); // Reset start time
+    setStartTime(new Date().getTime());
     setFullName("");
     setEmail("");
     setTechStack("");
-    if (dropdownRef.current) {
-      dropdownRef.current.value = ""; // Reset dropdown selection
-    }
+    setPassword("");
+    setConfirmPassword("");
+    setError("");
   };
 
-  // Handle "Clear Table" click → Remove all saved data
   const handleClearTable = () => {
-    setUserData([]); // Clear table data in state
-    localStorage.removeItem("userData"); // Remove saved data
+    setUserData([]);
+    localStorage.removeItem("userData");
   };
 
-  // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    const exitTime = new Date().getTime(); // Capture exit time
-    const timeSpent = (exitTime - startTime) / 1000; // Calculate time spent in seconds
 
-    // Append new data to userData array
+    if (password !== confirmPassword) {
+      setError("Something is wrong. Try again."); // Vague error message
+      return;
+    }
+
+    setError("");
+    const exitTime = new Date().getTime();
+    const timeSpent = (exitTime - startTime) / 1000;
+
     const newUser = { fullName, email, techStack, timeSpent };
     const updatedUserData = [...userData, newUser];
 
-    setUserData(updatedUserData); // Update state
-    localStorage.setItem("userData", JSON.stringify(updatedUserData)); // Save to localStorage
+    setUserData(updatedUserData);
+    localStorage.setItem("userData", JSON.stringify(updatedUserData));
 
-    // Clear input fields
     handleClearForm();
   };
 
   return (
     <div className="form-container">
-      {/* Show "Enter" button initially */}
       {!showForm && (
         <div className="enter-container">
           <button onClick={handleEnterClick} className="enter-button">
-            Enter
+            Proceed
           </button>
         </div>
       )}
 
-      {/* Show form only after "Enter" is clicked */}
       {showForm && (
         <div className="form-card">
-          <h2 className="form-title">SDE Intern Application</h2>
+          <h2 className="form-title">Application Form</h2>
           <form className="form-content" onSubmit={handleSubmit}>
             <div className="form-section">
               <label>Full Name</label>
-              <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+              <input
+                id="fullNameField"
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                onFocus={() => handleFieldFocus("fullName")}
+                required
+              />
             </div>
 
             <div className="form-section">
               <label>Email Address</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <input
+                id="emailField"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onFocus={() => handleFieldFocus("email")}
+                required
+              />
             </div>
 
             <div className="form-section">
               <label>Preferred Tech Stack</label>
-              <select ref={dropdownRef} onChange={(e) => setTechStack(e.target.value)} onFocus={handleTechStackFocus} value={techStack}>
-                <option value="">Select Tech Stack</option>
+              <select
+                ref={dropdownRef}
+                onChange={(e) => setTechStack(e.target.value)}
+                value={techStack}
+              >
+                <option value="">Choose an option</option>
                 <option value="MERN">MERN</option>
                 <option value="MEVN">MEVN</option>
                 <option value="LAMP">LAMP</option>
@@ -113,32 +136,54 @@ export default function SDEInternApplication() {
             </div>
 
             <div className="form-section">
-              <label>Create a Password (For Job Portal Access)</label>
-              <input type="password" onKeyDown={handlePasswordKeyDown} required />
+              <label>Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={handlePasswordKeyDown}
+                required
+              />
             </div>
 
+            <div className="form-section">
+              <label>Confirm Password</label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onKeyDown={handlePasswordKeyDown}
+                required
+              />
+            </div>
+
+            {error && <p className="error-message">{error}</p>}
+
             <div className="form-actions">
-              <button type="button" className="clear-button" onClick={handleClearForm}>Clear Form</button>
-              <button type="submit" className="submit-button">Submit</button>
+              <button type="button" className="clear-button" onClick={handleClearForm}>
+                Erase
+              </button>
+              <button type="submit" className="submit-button">
+                Send
+              </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Results Table (Always Below the Form) */}
       <div className="results-container">
-        <h2>Submitted Users</h2>
+        <h2>Applications</h2>
         {userData.length === 0 ? (
-          <p>No submissions yet.</p>
+          <p>No data yet.</p>
         ) : (
           <>
             <table className="results-table">
               <thead>
                 <tr>
-                  <th>Full Name</th>
+                  <th>Name</th>
                   <th>Email</th>
-                  <th>Tech Stack</th>
-                  <th>Time Spent (seconds)</th>
+                  <th>Stack</th>
+                  <th>Time</th>
                 </tr>
               </thead>
               <tbody>
@@ -147,15 +192,13 @@ export default function SDEInternApplication() {
                     <td>{user.fullName}</td>
                     <td>{user.email}</td>
                     <td>{user.techStack}</td>
-                    <td>{user.timeSpent}</td>
+                    <td>{user.timeSpent}s</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-
-            {/* Clear Table Button */}
             <button onClick={handleClearTable} className="clear-table-button">
-              Clear Table
+              Wipe
             </button>
           </>
         )}
@@ -163,6 +206,3 @@ export default function SDEInternApplication() {
     </div>
   );
 }
-
-
-
